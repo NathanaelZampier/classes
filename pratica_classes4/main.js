@@ -64,6 +64,28 @@ class Pedido {
         return  this.#status
     }
 
+    pagar(valor) {
+        const total = this.calcularTotal() 
+        let pagamentoSucesso
+        let pagamentoRecusado
+        let pagamentoJaEfetuado
+
+        if (this.#status === 'pendente' && this.produtos.length > 0) {
+
+            if (valor === total) {
+                this.#status = 'pago'
+                pagamentoSucesso = `pagamento efetuado com sucesso`
+                return pagamentoSucesso;
+            } else {
+                pagamentoRecusado = `pagamento recusado`
+                return pagamentoRecusado
+            }
+        } else {
+            pagamentoJaEfetuado = `o pagamento ja foi realizado`
+            return pagamentoJaEfetuado
+        }
+    }
+
     alterarStatus(novoStatus) {
         if (this.#status === 'pendente' && novoStatus === 'pago') {
 
@@ -176,18 +198,15 @@ pedido1.adicionarProduto(teclado, 2)
 
 console.log(teclado.mostrarInfo())
 
-console.log(pedido1.status)
-
-pedido1.alterarStatus('pago')
+console.log(jogoVirtual.mostrarInfo())
 
 console.log(pedido1.status)
 
-pedido1.alterarStatus('enviado')
+console.log(pedido1.calcularTotal())
 
-pedido1.alterarStatus('entregue')
+const pagamento = pedido1.pagar(540)
 
-pedido1.alterarStatus('cancelado')
+console.log(pagamento)
 
-console.log(pedido1.status)
 
-pedido1.cancelarPedido()
+
