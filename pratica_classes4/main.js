@@ -65,46 +65,66 @@ class Pedido {
     }
 
     pagar(valor) {
+        let pago = false
         const total = this.calcularTotal() 
         let pagamentoSucesso
         let pagamentoRecusado
-        let pagamentoJaEfetuado
+        let pagamentoJaOuPedidoVazio
 
         if (this.#status === 'pendente' && this.produtos.length > 0) {
 
             if (valor === total) {
+                pago = true
                 this.#status = 'pago'
                 pagamentoSucesso = `pagamento efetuado com sucesso`
-                return pagamentoSucesso;
+                console.log(pagamentoSucesso)
+                return pago
             } else {
+                pago = false
                 pagamentoRecusado = `pagamento recusado`
-                return pagamentoRecusado
+                console.log(pagamentoRecusado)
+                return pago
             }
         } else {
-            pagamentoJaEfetuado = `o pagamento ja foi realizado`
-            return pagamentoJaEfetuado
+            pago = false
+            pagamentoJaOuPedidoVazio = `o pagamento ja foi realizado ou carrinho está vazio`
+            console.log(pagamentoJaOuPedidoVazio)
+            return pago
         }
     }
+
+    verificarEnvio() {
+        if (this.#status === 'pago' && this.produtos.length > 0) {
+            return true
+        } else  {
+            return false
+    }
+}
 
     alterarStatus(novoStatus) {
         if (this.#status === 'pendente' && novoStatus === 'pago') {
 
                 if (this.produtos.length === 0) {
                     console.log('o pedido não possui nenhum produto')
+                    return false
                 }  else if (this.produtos.length > 0) {
                     this.#status = novoStatus
+                    return true
                 }
             
         } else if (this.#status === 'pendente' && (novoStatus === 'enviado' || novoStatus === 'entregue')) {
             console.log('pagamento pendente')
+            return false
         
         } else if (this.#status === 'pago' && novoStatus === 'enviado') {
             this.#status = novoStatus
-
+            return true
         } else if (this.#status === 'enviado' && novoStatus === 'entregue') {
             this.#status = novoStatus
+            return true
         } else {
             console.log('status inválido')
+            return false
         }
     }
 
@@ -188,6 +208,19 @@ class Pedido {
         }
         return total
     }
+
+    enviarPedido() {
+        if (this.verificarEnvio()) {
+            this.#status = 'enviado'
+            console.log('pedido enviado')
+        } else {
+            console.log('não é possível enviar o pedido')
+        }
+    }
+
+    finalizarPedido() {
+
+    }
 } 
 
 
@@ -204,9 +237,30 @@ console.log(pedido1.status)
 
 console.log(pedido1.calcularTotal())
 
-const pagamento = pedido1.pagar(540)
+const totalPedido = pedido1.calcularTotal()
+
+const pagamento = pedido1.pagar(totalPedido)
 
 console.log(pagamento)
+
+const podeEnviar = pedido1.verificarEnvio()
+
+
+if (podeEnviar) {
+    console.log('pagamento realizado, envio liberado!')
+} else {
+    console.log('pagamento negado, envio não autorizado!')
+}
+
+
+if (pagamento) {
+    console.log('o pagamento foi realizado')
+} else {
+    console.log('o pagamento não foi realizado')
+}
+
+
+
 
 
 
